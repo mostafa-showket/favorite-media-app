@@ -1,2 +1,21 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Node dependencies
+client/node_modules/
+server/node_modules/
+
+# Build outputs
+client/dist/
+server/dist/
+
+# Environment variables
+client/.env
+server/.env
+
+# Logs & temp
+*.log
+.DS_Store
+
+# VS Code
+.vscode/
