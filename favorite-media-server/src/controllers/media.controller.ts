@@ -15,3 +15,13 @@ export async function createMedia(req: Request, res: Response) {
     res.status(500).json({ error: "Failed to create the media item" });
   }
 }
+
+export async function getMedia(_req: Request, res: Response) {
+  try {
+    const mediaList = await prisma.media.findMany();
+    res.status(200).json(mediaList);
+  } catch (error) {
+    console.error("Error fetching media:", error);
+    res.status(500).json({ error: "Failed to fetch media." });
+  }
+}
