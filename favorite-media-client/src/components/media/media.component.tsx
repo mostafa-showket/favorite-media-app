@@ -12,6 +12,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { GetMedia } from "../../actions";
 import type { Media } from "../../types";
+import { MediaRow } from "./media-row.component";
 
 export function MediaTable() {
   const { data, isLoading, error } = useQuery({
@@ -62,16 +63,7 @@ export function MediaTable() {
             </TableRow>
           ) : (
             mediaList.map((item: Media) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.title}</TableCell>
-                <TableCell>{item.type}</TableCell>
-                <TableCell>{item.genre}</TableCell>
-                <TableCell>{item.director}</TableCell>
-                <TableCell>{item.budget}</TableCell>
-                <TableCell>{item.location}</TableCell>
-                <TableCell>{item.duration}</TableCell>
-                <TableCell>{item.yearOrTime}</TableCell>
-              </TableRow>
+              <MediaRow key={item.id} item={item} />
             ))
           )}
         </TableBody>
