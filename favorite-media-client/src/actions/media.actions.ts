@@ -97,3 +97,30 @@ export async function UpdateMedia(
     };
   }
 }
+
+export function DeleteMedia(id: number): Promise<ApiResponse<null>> {
+  return fetch(`${baseURL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((errorData) => {
+          throw new Error(
+            errorData.error || `HTTP error! status: ${response.status}`
+          );
+        });
+      }
+      return { success: true, data: null };
+    })
+    .catch((error) => {
+      console.error("Error deleting media:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to delete media",
+      };
+    });
+}

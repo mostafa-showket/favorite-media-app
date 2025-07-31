@@ -83,16 +83,16 @@ export async function updateMedia(req: Request, res: Response) {
   } = req.body;
 
   if (!id) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       success: false,
-      error: "Media ID is required" 
+      error: "Media ID is required",
     });
   }
 
   if (!title || !type) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       success: false,
-      error: "Title and type are required" 
+      error: "Title and type are required",
     });
   }
 
@@ -118,9 +118,31 @@ export async function updateMedia(req: Request, res: Response) {
     });
   } catch (error) {
     console.error("Error updating media:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      error: "Failed to update the media item" 
+      error: "Failed to update the media item",
     });
+  }
+}
+
+export async function deleteMedia(req: Request, res: Response) {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: "Media ID is required" });
+  }
+
+  try {
+    await prisma.media.delete({
+      where: { id: Number(id) },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Media item deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting media:", error);
+    res.status(500).json({ error: "Failed to delete the media item" });
   }
 }
