@@ -65,15 +65,8 @@ app.use("*", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-  console.log("Available routes:");
-  console.log("  GET  /api/media");
-  console.log("  POST /api/media");
-  console.log("  PUT  /api/media/:id");
-  console.log("  DELETE  /api/media/:id");
-  console.log("  POST /api/auth/signup");
-  console.log("  POST /api/auth/signin");
-  console.log("  POST /api/auth/signout");
-  console.log("  GET  /api/auth/profile");
+const PORT = parseInt(process.env.PORT || '3000', 10);
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
