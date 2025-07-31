@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_20_x", "npm"]
 
 [phases.install]
-cmds = ["cd favorite-media-server && npm install"]
+cmds = ["npm install"]
 
 [phases.build]
-cmds = ["cd favorite-media-server && npm run generate && npm run build"] 
+cmds = ["npm run generate && npm run build"] 
