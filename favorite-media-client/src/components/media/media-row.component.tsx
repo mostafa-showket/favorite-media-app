@@ -5,9 +5,10 @@ import type { Media } from "../../types";
 
 interface MediaRowProps {
   item: Media;
+  onEdit: (media: Media | undefined) => void;
 }
 
-export function MediaRow({ item }: MediaRowProps) {
+export function MediaRow({ item, onEdit }: MediaRowProps) {
   return (
     <TableRow hover>
       <TableCell>
@@ -43,7 +44,7 @@ export function MediaRow({ item }: MediaRowProps) {
       <TableCell>{item.yearOrTime}</TableCell>
       <TableCell>
         <div style={{ display: "flex", gap: "4px" }}>
-          <IconButton size="small" color="primary">
+          <IconButton size="small" color="primary" onClick={() => onEdit(item)}>
             <EditIcon fontSize="small" />
           </IconButton>
           <IconButton size="small" color="error">
