@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20_x", "npm"]
+
+[phases.install]
+cmds = ["cd favorite-media-server && npm install"]
+
+[phases.build]
+cmds = ["cd favorite-media-server && npm run generate && npm run build"]
+
+[start]
+cmd = "cd favorite-media-server && npm start" 
