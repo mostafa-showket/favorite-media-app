@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createMedia,
+  deleteMedia,
   getMedia,
   updateMedia,
 } from "../controllers/media.controller";
@@ -24,6 +25,7 @@ router.get("/test", (req, res) => {
 router.post("/media", createMedia);
 router.get("/media", getMedia);
 router.put("/media/:id", updateMedia);
+router.delete("/media/:id", deleteMedia);
 
 // Add a simple test route without parameters
 router.get("/media-test", (req, res) => {

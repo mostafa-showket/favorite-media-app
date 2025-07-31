@@ -5,10 +5,12 @@ import mediaRoutes from "./routes/media";
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors({
-  origin: "http://localhost:5173", // Vite dev server default port
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Vite dev server default port
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -22,10 +24,17 @@ console.log("Mounting media routes at /api");
 app.use("/api", mediaRoutes);
 console.log("Media routes mounted successfully");
 
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Something went wrong!" });
+  }
+);
 
 app.get("/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
@@ -34,11 +43,16 @@ app.get("/health", (req, res) => {
 // Catch-all route for debugging
 app.use("*", (req, res) => {
   console.log(`404 - Method: ${req.method}, Path: ${req.path}`);
-  res.status(404).json({ 
-    error: "Route not found", 
-    method: req.method, 
+  res.status(404).json({
+    error: "Route not found",
+    method: req.method,
     path: req.path,
-    availableRoutes: ["GET /api/media", "POST /api/media", "PUT /api/media/:id"]
+    availableRoutes: [
+      "GET /api/media",
+      "POST /api/media",
+      "PUT /api/media/:id",
+      "DELETE /api/media/:id",
+    ],
   });
 });
 
@@ -48,4 +62,5 @@ app.listen(3000, () => {
   console.log("  GET  /api/media");
   console.log("  POST /api/media");
   console.log("  PUT  /api/media/:id");
+  console.log("  DELETE  /api/media/:id");
 });
