@@ -39,7 +39,11 @@ export function MediaTable() {
   return (
     <TableContainer
       component={Paper}
-      sx={{ maxWidth: 1200, margin: "20px auto" }}
+      sx={{
+        margin: "20px 0",
+        boxShadow: 2,
+        borderRadius: 2,
+      }}
     >
       <Table>
         <TableHead>
@@ -52,12 +56,13 @@ export function MediaTable() {
             <TableCell>Location</TableCell>
             <TableCell>Duration</TableCell>
             <TableCell>Year/Time</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {mediaList.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} align="center">
+              <TableCell colSpan={9} align="center">
                 No media items found
               </TableCell>
             </TableRow>
