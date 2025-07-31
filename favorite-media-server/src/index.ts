@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mediaRoutes from "./routes/media";
+import authRoutes from "./routes/auth";
 
 const app = express();
 
@@ -23,6 +24,10 @@ app.use((req, res, next) => {
 console.log("Mounting media routes at /api");
 app.use("/api", mediaRoutes);
 console.log("Media routes mounted successfully");
+
+console.log("Mounting auth routes at /api/auth");
+app.use("/api/auth", authRoutes);
+console.log("Auth routes mounted successfully");
 
 app.use(
   (
@@ -52,6 +57,10 @@ app.use("*", (req, res) => {
       "POST /api/media",
       "PUT /api/media/:id",
       "DELETE /api/media/:id",
+      "POST /api/auth/signup",
+      "POST /api/auth/signin",
+      "POST /api/auth/signout",
+      "GET /api/auth/profile",
     ],
   });
 });
@@ -63,4 +72,8 @@ app.listen(3000, () => {
   console.log("  POST /api/media");
   console.log("  PUT  /api/media/:id");
   console.log("  DELETE  /api/media/:id");
+  console.log("  POST /api/auth/signup");
+  console.log("  POST /api/auth/signin");
+  console.log("  POST /api/auth/signout");
+  console.log("  GET  /api/auth/profile");
 });

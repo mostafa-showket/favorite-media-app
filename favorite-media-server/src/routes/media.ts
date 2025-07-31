@@ -5,6 +5,7 @@ import {
   getMedia,
   updateMedia,
 } from "../controllers/media.controller";
+import { authenticateToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -22,10 +23,10 @@ router.get("/test", (req, res) => {
   res.json({ message: "Media routes are working" });
 });
 
-router.post("/media", createMedia);
-router.get("/media", getMedia);
-router.put("/media/:id", updateMedia);
-router.delete("/media/:id", deleteMedia);
+router.post("/media", authenticateToken, createMedia);
+router.get("/media", authenticateToken, getMedia);
+router.put("/media/:id", authenticateToken, updateMedia);
+router.delete("/media/:id", authenticateToken, deleteMedia);
 
 // Add a simple test route without parameters
 router.get("/media-test", (req, res) => {

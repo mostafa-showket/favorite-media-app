@@ -12,10 +12,12 @@ export interface ApiResponse<T> {
 
 export async function GetMedia(): Promise<ApiResponse<Media[]>> {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(baseURL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
     });
 
@@ -42,10 +44,12 @@ export async function CreateMedia(
   mediaData: Omit<Media, "id" | "createdAt">
 ): Promise<ApiResponse<Media>> {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(baseURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify(mediaData),
     });
@@ -72,10 +76,12 @@ export async function UpdateMedia(
   mediaData: Omit<Media, "createdAt">
 ): Promise<ApiResponse<Media>> {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(`${baseURL}/${mediaData.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify(mediaData),
     });
@@ -99,10 +105,12 @@ export async function UpdateMedia(
 }
 
 export function DeleteMedia(id: number): Promise<ApiResponse<null>> {
+  const token = localStorage.getItem("token");
   return fetch(`${baseURL}/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
   })
     .then((response) => {

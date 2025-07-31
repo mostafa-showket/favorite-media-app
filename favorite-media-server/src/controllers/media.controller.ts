@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 const prisma = new PrismaClient();
 
-export async function createMedia(req: Request, res: Response) {
+export async function createMedia(req: AuthRequest, res: Response) {
   try {
     const {
       title,
@@ -45,7 +46,7 @@ export async function createMedia(req: Request, res: Response) {
   }
 }
 
-export async function getMedia(_req: Request, res: Response) {
+export async function getMedia(_req: AuthRequest, res: Response) {
   try {
     const mediaList = await prisma.media.findMany({
       orderBy: {
@@ -68,7 +69,7 @@ export async function getMedia(_req: Request, res: Response) {
   }
 }
 
-export async function updateMedia(req: Request, res: Response) {
+export async function updateMedia(req: AuthRequest, res: Response) {
   const { id } = req.params;
   const {
     title,
@@ -125,7 +126,7 @@ export async function updateMedia(req: Request, res: Response) {
   }
 }
 
-export async function deleteMedia(req: Request, res: Response) {
+export async function deleteMedia(req: AuthRequest, res: Response) {
   const { id } = req.params;
 
   if (!id) {
