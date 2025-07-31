@@ -11,7 +11,16 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Add route debugging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
+console.log("Mounting media routes at /api");
 app.use("/api", mediaRoutes);
+console.log("Media routes mounted successfully");
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
@@ -22,6 +31,21 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
+// Catch-all route for debugging
+app.use("*", (req, res) => {
+  console.log(`404 - Method: ${req.method}, Path: ${req.path}`);
+  res.status(404).json({ 
+    error: "Route not found", 
+    method: req.method, 
+    path: req.path,
+    availableRoutes: ["GET /api/media", "POST /api/media", "PUT /api/media/:id"]
+  });
+});
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
+  console.log("Available routes:");
+  console.log("  GET  /api/media");
+  console.log("  POST /api/media");
+  console.log("  PUT  /api/media/:id");
 });

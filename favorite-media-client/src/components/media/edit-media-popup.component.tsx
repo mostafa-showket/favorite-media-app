@@ -1,4 +1,7 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -7,9 +10,30 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { Media } from "../../types";
+import { CreateMedia, UpdateMedia } from "../../actions";
+
+// Zod schema for validation
+const mediaSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required"),
+  type: z.string().min(1, "Type is required"),
+  genre: z.string().optional(),
+  director: z.string().optional(),
+  budget: z.string().optional(),
+  location: z.string().optional(),
+  duration: z.string().optional(),
+  yearOrTime: z.string().optional(),
+  image: z.string().optional().nullable(),
+  createdAt: z.string().optional(),
+});
+
+type MediaFormData = z.infer<typeof mediaSchema>;
 
 interface EditMediaPopupProps {
   open: boolean;
@@ -18,109 +42,163 @@ interface EditMediaPopupProps {
 }
 
 export function EditMediaPopup({ media, onClose, open }: EditMediaPopupProps) {
-  const { register, watch } = useForm<Media>({
+  const queryClient = useQueryClient();
+
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors, isSubmitted },
+    reset,
+  } = useForm<MediaFormData>({
+    resolver: zodResolver(mediaSchema),
     defaultValues: media || ({} as Media),
   });
-  const [title, type, genre, director, budget, location, duration, yearOrTime] =
-    watch([
-      "title",
-      "type",
-      "genre",
-      "director",
-      "budget",
-      "location",
-      "duration",
-      "yearOrTime",
-    ]);
-  console.log("EditMediaPopup", { media });
+
+  const [title, type] = watch(["title", "type"]);
+
+  useEffect(() => {
+    if (media) {
+      reset(media);
+    } else {
+      reset({});
+    }
+  }, [media, reset]);
+
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (data: Media) => {
+      return media ? UpdateMedia(data) : CreateMedia(data);
+    },
+    onSuccess: (response) => {
+      if (response.success) {
+        onClose(false);
+        reset();
+        queryClient.invalidateQueries({ queryKey: ["MediaListQuery"] });
+      }
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    },
+  });
+
+  const onSubmit = (data: MediaFormData) => {
+    const submitData = media ? { ...data, id: media.id } : data;
+    mutate(submitData as Media);
+  };
+
+  const handleClose = () => {
+    onClose(false);
+    reset();
+  };
 
   return (
-    <Dialog open={open} onClose={() => onClose(false)}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>
         {media ? `Edit Media ${media.title}` : "Add new Media"}
       </DialogTitle>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error.message || "An error occurred while saving the media"}
+            </Alert>
+          )}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                id="outlined-basic"
-                {...register("title", {
-                  value: title,
-                  required: "Product Title is required !!",
-                })}
-                label="Title"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                {...register("type", {
-                  value: type,
-                  required: "Product type is required !!",
-                })}
-                label="Type"
-                variant="outlined"
-              />
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="title"
+                  {...register("title")}
+                  label="Title"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.title}
+                  helperText={
+                    errors.title?.message ||
+                    (isSubmitted && !title ? "Title is required" : "")
+                  }
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="type"
+                  {...register("type")}
+                  label="Type"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.type}
+                  helperText={
+                    errors.type?.message ||
+                    (isSubmitted && !type ? "Type is required" : "")
+                  }
+                />
+              </Box>
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                id="outlined-basic"
-                {...register("genre", {
-                  value: genre,
-                  required: "Media Genre is required !!",
-                })}
-                label="Genre"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                {...register("director", {
-                  value: director,
-                  required: "Media Director is required !!",
-                })}
-                label="Director"
-                variant="outlined"
-              />
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="genre"
+                  {...register("genre")}
+                  label="Genre"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.genre}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="director"
+                  {...register("director")}
+                  label="Director"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.director}
+                />
+              </Box>
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                id="outlined-basic"
-                {...register("budget", {
-                  value: budget,
-                  required: "Media Budget is required !!",
-                })}
-                label="Budget"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                {...register("location", {
-                  value: location,
-                  required: "Media Location is required !!",
-                })}
-                label="Location"
-                variant="outlined"
-              />
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="budget"
+                  {...register("budget")}
+                  label="Budget"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.budget}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="location"
+                  {...register("location")}
+                  label="Location"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.location}
+                />
+              </Box>
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                id="outlined-basic"
-                {...register("duration", {
-                  value: duration,
-                  required: "Media Duration is required !!",
-                })}
-                label="Duration"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                {...register("yearOrTime", {
-                  value: yearOrTime,
-                  required: "Media Year/Time is required !!",
-                })}
-                label="Year/Time"
-                variant="outlined"
-              />
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="duration"
+                  {...register("duration")}
+                  label="Duration"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.duration}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  id="yearOrTime"
+                  {...register("yearOrTime")}
+                  label="Year/Time"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors.yearOrTime}
+                />
+              </Box>
             </Box>
           </Box>
         </DialogContent>
@@ -128,12 +206,18 @@ export function EditMediaPopup({ media, onClose, open }: EditMediaPopupProps) {
           <Button
             type="button"
             variant="outlined"
-            onClick={() => onClose(false)}
+            onClick={handleClose}
+            disabled={isPending}
           >
             Cancel
           </Button>
-          <Button type="submit" variant="contained">
-            Save
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isPending}
+            startIcon={isPending ? <CircularProgress size={20} /> : undefined}
+          >
+            {isPending ? "Saving..." : "Save"}
           </Button>
         </DialogActions>
       </form>
