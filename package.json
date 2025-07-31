@@ -1,0 +1,11 @@
+{
+  "name": "favorite-media-app",
+  "version": "1.0.0",
+  "description": "Favorite Media App with backend and frontend",
+  "scripts": {
+    "start": "cd favorite-media-server && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
