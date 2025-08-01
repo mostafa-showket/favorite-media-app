@@ -1,6 +1,6 @@
 import type { Media } from "../types/media";
 
-const baseURL = "http://localhost:3000/api/media";
+const baseURL = `${import.meta.env.VITE_BASE_API_URL}/auth`;
 
 export interface ApiResponse<T> {
   success: boolean;
