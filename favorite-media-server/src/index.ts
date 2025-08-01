@@ -8,11 +8,7 @@ const app = express();
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://favorite-media-app-5hu.vercel.app",
-      "https://favorite-media-app-a5hu.vercel.app"
-    ],
+    origin: "*",
     credentials: true,
   })
 );
