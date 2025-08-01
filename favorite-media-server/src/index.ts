@@ -8,7 +8,10 @@ const app = express();
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: "http://localhost:5173", // Vite dev server default port
+    origin: [
+      "http://localhost:5173",
+      "https://favorite-media-app-5hu.vercel.app"
+    ], // Vite dev server default port
     credentials: true,
   })
 );
